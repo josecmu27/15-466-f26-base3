@@ -8,6 +8,22 @@
 #include <vector>
 #include <deque>
 
+// Each Music Note Sound Effect has been created with BeepBox.co
+enum MusicNote {
+	Purple,
+	Red,
+	Yellow,
+	Blue,
+	Green
+};
+
+enum GameState {
+	PreRound,
+	Memorize,
+	Play,
+	PostRound
+};
+
 struct PlayMode : Mode {
 	PlayMode();
 	virtual ~PlayMode();
@@ -23,29 +39,79 @@ struct PlayMode : Mode {
 	struct Button {
 		uint8_t downs = 0;
 		uint8_t pressed = 0;
-	} left, right, down, up;
+	} purple, red, yellow, blue, green;
 
 	//local copy of the game scene (so code can change it during gameplay):
 	Scene scene;
 
 	//hexapod leg to wobble:
-	Scene::Transform *hip = nullptr;
-	Scene::Transform *upper_leg = nullptr;
-	Scene::Transform *lower_leg = nullptr;
-	glm::quat hip_base_rotation;
-	glm::quat upper_leg_base_rotation;
-	glm::quat lower_leg_base_rotation;
-	float wobble = 0.0f;
+	// Scene::Transform *hip = nullptr;
+	// Scene::Transform *upper_leg = nullptr;
+	// Scene::Transform *lower_leg = nullptr;
+	// glm::quat hip_base_rotation;
+	// glm::quat upper_leg_base_rotation;
+	// glm::quat lower_leg_base_rotation;
+	// float wobble = 0.0f;
 
-	glm::vec3 get_leg_tip_position();
+	// glm::vec3 get_leg_tip_position();
 
 	//music coming from the tip of the leg (as a demonstration):
 	std::shared_ptr< Sound::PlayingSample > leg_tip_loop;
 
 	//car honk sound:
 	std::shared_ptr< Sound::PlayingSample > honk_oneshot;
+
+	/*----------------------SOUND----------------------------*/
+
+	std::shared_ptr< Sound::PlayingSample > purple_oneshot;
+
+	std::shared_ptr< Sound::PlayingSample > red_oneshot;
+
+	std::shared_ptr< Sound::PlayingSample > yellow_oneshot;
+
+	std::shared_ptr< Sound::PlayingSample > blue_oneshot;
+
+	std::shared_ptr< Sound::PlayingSample > green_oneshot;
+
+	std::shared_ptr< Sound::PlayingSample > game_win_oneshot;
+
+	std::shared_ptr< Sound::PlayingSample > game_lose_oneshot;
+
+	std::shared_ptr< Sound::PlayingSample > correct_oneshot;
+
+	std::shared_ptr< Sound::PlayingSample > incorrect_oneshot;
+
+	std::shared_ptr<Sound::PlayingSample> current_oneshot;
+
+	std::vector< Sound::Sample >  musicnote_samples;
 	
+
 	//camera:
 	Scene::Camera *camera = nullptr;
+
+	/*-----------------GAME------------------------*/
+
+	GameState current_game_state = GameState::PreRound;
+	std::string current_game_message = "";
+	int current_note_idx = 0;
+	int music_sheet_index = 0;
+	glm::vec3 initial_camera_position = glm::vec3(0.0f);
+
+	
+	std::vector<std::vector<MusicNote>> music_sheets = {
+		{MusicNote::Purple, MusicNote::Red, MusicNote::Blue, MusicNote::Purple},
+		{MusicNote::Red, MusicNote::Blue, MusicNote::Blue, MusicNote::Green},
+		{MusicNote::Green, MusicNote::Red, MusicNote::Blue, MusicNote::Yellow}
+	};
+
+	std::vector<MusicNote> correct_notes;
+
+
+
+	/*-----------------PLAYER----------------------*/
+	int hit_points = 3.0f;
+	std::vector<MusicNote> played_notes;
+	void RegisterMusicNote(MusicNote music_note);
+
 
 };
